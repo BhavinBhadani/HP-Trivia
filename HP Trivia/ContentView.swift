@@ -13,6 +13,7 @@ struct ContentView: View {
     @State private var scalePlayButton = false
     @State private var moveBackgroundImage = false
     @State private var animateViewsIn = false
+    @State private var showInstructions = false
 
     var body: some View {
         GeometryReader { geo in
@@ -81,7 +82,7 @@ struct ContentView: View {
                         VStack {
                             if animateViewsIn {
                                 Button {
-                                    
+                                    showInstructions.toggle()
                                 } label: {
                                     Image(systemName: "info.circle.fill")
                                         .font(.largeTitle)
@@ -150,6 +151,9 @@ struct ContentView: View {
         .onAppear {
             //playAudio()
             animateViewsIn = true
+        }
+        .sheet(isPresented: $showInstructions) {
+            Instructions() 
         }
     }
     
