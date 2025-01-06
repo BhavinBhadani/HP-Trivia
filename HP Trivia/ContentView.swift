@@ -14,7 +14,8 @@ struct ContentView: View {
     @State private var moveBackgroundImage = false
     @State private var animateViewsIn = false
     @State private var showInstructions = false
-
+    @State private var showSettings = false
+    
     var body: some View {
         GeometryReader { geo in
             ZStack {
@@ -126,7 +127,7 @@ struct ContentView: View {
                         VStack {
                             if animateViewsIn {
                                 Button {
-                                    
+                                    showSettings.toggle()
                                 } label: {
                                     Image(systemName: "gearshape.fill")
                                         .font(.largeTitle)
@@ -155,6 +156,10 @@ struct ContentView: View {
         .sheet(isPresented: $showInstructions) {
             Instructions()
         }
+        .sheet(isPresented: $showSettings) {
+            Settings()
+        }
+
     }
     
     private func playAudio() {
