@@ -153,7 +153,7 @@ struct ContentView: View {
             animateViewsIn = true
         }
         .sheet(isPresented: $showInstructions) {
-            Instructions() 
+            Instructions()
         }
     }
     
