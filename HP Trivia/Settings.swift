@@ -23,9 +23,9 @@ struct Settings: View {
             
             VStack {
                 Text("Which books would you like to see questions from?")
-                    .font(.largeTitle)
+                    .font(.title)
                     .multilineTextAlignment(.center)
-                    .padding()
+                    .padding(.top)
 
                 ScrollView {
                     LazyVGrid(columns: [GridItem(), GridItem()]) {
