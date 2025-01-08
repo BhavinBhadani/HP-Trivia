@@ -12,6 +12,7 @@ struct GamePlay: View {
     @Namespace private var namespace
     @State private var animateViewsIn = false
     @State private var tappedCorrectAnswer = false
+    @State private var wrongAnswersTapped: [Int] = []
     @State private var hintWiggle = false
     @State private var scaleNextButton = false
     @State private var movePointsToScore = false
@@ -53,6 +54,7 @@ struct GamePlay: View {
                                 .multilineTextAlignment(.center)
                                 .padding()
                                 .transition(.scale)
+                                .opacity(tappedCorrectAnswer ? 0.1 : 1)
                         }
                     }
                     .animation(.easeIn(duration: 2), value: animateViewsIn)
@@ -93,6 +95,8 @@ struct GamePlay: View {
                                             .opacity(revealHint ? 1 : 0)
                                             .scaleEffect(revealHint ? 1.33 : 1)
                                     )
+                                    .opacity(tappedCorrectAnswer ? 0.1 : 1)
+                                    .disabled(tappedCorrectAnswer)
                             }
                         }
                         .animation(.easeOut(duration: 1.4).delay(2), value: animateViewsIn)
@@ -135,6 +139,8 @@ struct GamePlay: View {
                                             .opacity(revealBook ? 1 : 0)
                                             .scaleEffect(revealBook ? 1.33 : 1)
                                     )
+                                    .opacity(tappedCorrectAnswer ? 0.1 : 1)
+                                    .disabled(tappedCorrectAnswer)
                             }
                         }
                         .animation(.easeOut(duration: 1.4).delay(2), value: animateViewsIn)
@@ -173,9 +179,17 @@ struct GamePlay: View {
                                             .multilineTextAlignment(.center)
                                             .padding(10)
                                             .frame(width: geo.size.width / 2.15, height: 80)
-                                            .background(.green.opacity(0.5))
+                                            .background(wrongAnswersTapped.contains(i) ? Color.red.opacity(0.5) : Color .green.opacity(0.5))
                                             .clipShape(.rect(cornerRadius: 25))
                                             .transition(.scale)
+                                            .onTapGesture {
+                                                withAnimation(.easeOut(duration: 1)) {
+                                                    wrongAnswersTapped.append(i)
+                                                }
+                                            }
+                                            .scaleEffect(wrongAnswersTapped.contains(i) ? 0.8 : 1)
+                                            .disabled(tappedCorrectAnswer || wrongAnswersTapped.contains(i))
+                                            .opacity(tappedCorrectAnswer ? 0.1 : 1)
                                     }
                                 }
                                 .animation(.easeOut(duration: 1).delay(1.5), value: animateViewsIn)
@@ -244,7 +258,16 @@ struct GamePlay: View {
                     VStack {
                         if tappedCorrectAnswer {
                             Button("Next Level>") {
+                                animateViewsIn = false
+                                tappedCorrectAnswer = false
+                                revealHint = false
+                                revealBook = false
+                                movePointsToScore = false
+                                wrongAnswersTapped = []
                                 
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    animateViewsIn = true
+                                }
                             }
                             .buttonStyle(.borderedProminent)
                             .tint(.blue.opacity(0.5))
