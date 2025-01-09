@@ -24,8 +24,7 @@ struct Settings: View {
                 ScrollView {
                     LazyVGrid(columns: [GridItem(), GridItem()]) {
                         ForEach(0..<7) { i in
-                            switch store.books[i] {
-                                case .active:
+                            if store.books[i] == .active || (store.books[i] == .locked && store.purchasedIDs.contains("hp\(i+1)")) {
                                 ZStack(alignment: .bottomTrailing) {
                                     Image("hp\(i+1)")
                                         .resizable()
@@ -42,8 +41,10 @@ struct Settings: View {
                                 .onTapGesture {
                                     store.books[i] = .inactive
                                 }
-
-                            case .inactive:
+                                .task {
+                                    store.books[i] = .active
+                                }
+                            }  else if  store.books[i] == .inactive {
                                 ZStack(alignment: .bottomTrailing) {
                                     Image("hp\(i+1)")
                                         .resizable()
@@ -63,8 +64,7 @@ struct Settings: View {
                                 .onTapGesture {
                                     store.books[i] = .active
                                 }
-
-                            case .locked:
+                            } else {
                                 ZStack {
                                     Image("hp\(i+1)")
                                         .resizable()
@@ -78,6 +78,13 @@ struct Settings: View {
                                         .font(.largeTitle)
                                         .imageScale(.large)
                                         .shadow(color: .white.opacity(0.75), radius: 3)
+                                }
+                                .onTapGesture {
+                                    let product = store.products[i-3]
+                                    
+                                    Task {
+                                        await store.purchase(product)
+                                    }
                                 }
                             }
                         }
