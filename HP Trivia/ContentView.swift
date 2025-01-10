@@ -62,11 +62,11 @@ struct ContentView: View {
                                 Text("Recent Scores")
                                     .font(.title2)
                                 
-                                Text("33")
+                                Text("\(game.recentScores[0])")
                                 
-                                Text("27")
-                                
-                                Text("18")
+                                Text("\(game.recentScores[1])")
+
+                                Text("\(game.recentScores[2])")
                             }
                             .font(.title3)
                             .padding(.horizontal)
@@ -126,6 +126,12 @@ struct ContentView: View {
                                 .fullScreenCover(isPresented: $playGame) {
                                     GamePlay()
                                         .environmentObject(game)
+                                        .onAppear {
+                                            audioPlayer.setVolume(0, fadeDuration: 2)
+                                        }
+                                        .onDisappear {
+                                            audioPlayer.setVolume(1, fadeDuration: 3)
+                                        }
                                 }
                                 .disabled(store.books.contains(.active) ? false : true)
                             }
@@ -171,7 +177,7 @@ struct ContentView: View {
         }
         .ignoresSafeArea()
         .onAppear {
-            //playAudio()
+            playAudio()
             animateViewsIn = true
         }
         .sheet(isPresented: $showInstructions) {
@@ -192,13 +198,6 @@ struct ContentView: View {
     }
     
     private func filterQuestions() {
-//        var books: [Int] = []
-//        for (index, status) in store.books.enumerated() {
-//            if status == .active {
-//                books.append(index+1)
-//            }
-//        }
-        
         let books = store.books.enumerated().compactMap { $0.element == .active ? $0.offset : nil }
         game.filterQuestions(to: books)
         game.newQuestion()
